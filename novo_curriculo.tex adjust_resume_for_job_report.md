@@ -1,0 +1,1 @@
+I need the curriculum (`curriculum.tex` or `curriculum.pdf`) and the job description to complete this task.  Please provide these files.  The current error messages prevent me from accessing and processing the required information.

@@ -1,0 +1,1 @@
+I am unable to complete the task due to an error preventing access to the provided URL.  The error message " 'WebDriver' object is not callable" indicates a problem with the tool's configuration or implementation.  Please correct this error to allow the tool to successfully read the job description content.

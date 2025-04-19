@@ -1,0 +1,96 @@
+extract_curriculum_data:
+  description: >
+    Leia o arquivo de currículo fornecido via 'src/inputs'.
+    Determine se é um arquivo PDF ou LaTeX e use a ferramenta apropriada (PDFSearchTool para PDF, LatexReaderTool para LaTeX).
+    Extraia uma lista estruturada contendo:
+    - Experiências profissionais
+    - Habilidades
+    - Formação acadêmica
+    Após a extração, gere um relatório detalhado e salve-o como 'extract_curriculum_data_report.md'.
+    Além da estrutura dos dados, inclua informações adicionais relevantes, pois as informaçoes destes curriculos devem ser utilizadas para criar o novo curriculo. 
+  expected_output: >
+    Um dicionário estruturado com os dados extraídos do currículo (experiências, habilidades, educação).
+    O contexto deve ser nomeado 'extract_curriculum_data' para a próxima tarefa.
+    os dados do candidato devem ser extraídos e organizados em um formato estruturado, como JSON ou YAML.
+    O arquivo deve conter informaçoes detalhadas para que sejam aperfeiçoadas nas etapas seguintes.
+    Um arquivo data_curriculum.md
+    Um arquivo extract_curriculum_data_report.md
+  agent: curriculum_reader
+  inputs:
+    resume_path:: str(input_dir / 'curriculum.tex'),
+    file_path': str(input_dir / 'curriculum.pdf'),
+    query: "Extract professional experiences and academic background. For skills, search headings like 'Competências Técnicas', 'Competências Linguísticas' or 'Skills', and extract the items listed under these sections."
+  output_file: extract_curriculum_data_report.md
+
+explain_curriculum_learning:
+  description: >
+    Com base no conteúdo extraído pelo PDFSearchTool e LatexReaderTool na tarefa 'extract_curriculum_data', explique o que foi aprendido usando cada ferramenta.
+    Após a explicação, gere um relatório detalhado e salve-o como 'explain_curriculum_learning_report.md'.
+  expected_output: >
+    Um arquivo markdown com seções para PDFSearchTool e LatexReaderTool resumindo os insights extraídos.
+    Um arquivo explain_curriculum_learning_report.md
+  agent: curriculum_reader
+  context:
+    - extract_curriculum_data
+  output_file: 
+   explain_curriculum_learning_report.md
+
+css_analysis:
+  description: >
+    Analyze the CSS of the website provided in {job_url} and extract relevant information using the specified CSS selectors.
+    Após a análise, gere um relatório detalhado e salve-o como 'css_analysis_report.json'.
+  expected_output: >
+    A structured JSON or text file containing the extracted information from the website.
+    Um arquivo css_analysis_report.json
+  async_execution: false
+  agent: css_analyzer
+  output_file: 
+    css_analysis_output.json
+
+analyze_job_description:
+  description: >
+    Analise o conteúdo da descrição do trabalho do URL fornecido {job_url}.
+    Extraia os requisitos técnicos principais, experiências valorizadas e palavras-chave relevantes.
+    Após a análise, gere um relatório detalhado e salve-o como 'analyze_job_description_report.md'.
+  expected_output: >
+    Um resumo em tópicos destacando os requisitos principais e aspectos a enfatizar no currículo, com base na análise da descrição do trabalho.
+    Um arquivo analyze_job_description_report.md
+  agent: job_analyzer
+  output_file: 
+    analyze_job_description_report.md
+
+adjust_resume_for_job:
+  description: >
+    Usando os dados estruturados do currículo da tarefa 'extract_curriculum_data' e o resumo da análise do trabalho da tarefa 'analyze_job_description' como contexto, reescreva e reorganize seções do conteúdo original do currículo para melhorar o alinhamento com o trabalho alvo.
+    Concentre-se em destacar habilidades e experiências relevantes com base *apenas* no conteúdo do currículo fornecido. Não invente novas informações ou experiências.
+    Após o ajuste, gere um relatório detalhado e salve-o como 'adjust_resume_for_job_report.md'.
+    Siga estas diretrizes:
+    - Enfatize conteúdo relevante para o trabalho para melhorar a pontuação ATS. Evite gráficos complexos, a menos que solicitado.
+    - Priorize habilidades e qualificações sobre dados pessoais.
+    - Organize as informações estrategicamente para facilitar a leitura.
+    - Defina o campo Objetivo para: "Atuar como [cargo]" (onde [cargo] é inferido da descrição do trabalho).
+    - Certifique-se de que o conteúdo final do currículo seja conciso, idealmente cabendo em duas páginas quando compilado.
+  expected_output: >
+    O conteúdo completo e modificado do currículo como um único bloco de código LaTeX, salvo em um arquivo `.tex`.
+    Um arquivo adjust_resume_for_job_report.md
+  agent: resume_editor
+  output_file: 
+     novo_curriculo.tex
+     adjust_resume_for_job_report.md
+
+generate_report:
+  description: >
+    Compile um relatório detalhado documentando a execução de cada tarefa anterior ('extract_curriculum_data', 'analyze_job_description', 'adjust_resume_for_job').
+    Para cada tarefa, inclua:
+    - O agente responsável.
+    - O objetivo da tarefa.
+    - Um resumo dos resultados ou saídas geradas.
+    - Quaisquer observações ou desafios encontrados durante a execução (se disponíveis no contexto).
+    Após a compilação, gere um relatório detalhado e salve-o como 'generate_report_report.md'.
+  expected_output: >
+    Um arquivo markdown (`execution_report.md`) contendo o relatório estruturado da execução da equipe.
+    Um arquivo generate_report_report.md
+  agent: reporting_agent
+  output_file: 
+   execution_report.md
+   generate_report_report.md

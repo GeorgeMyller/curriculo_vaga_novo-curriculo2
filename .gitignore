@@ -1,0 +1,50 @@
+# Environments
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Secrets
+*.env
+
+# Output directories
+output/
+outputs/
+src/output/
+
+# Database files
+src/db/
+
+# CrewAI Runtime Reports & Intermediate Files (in src/)
+src/*_report.md
+src/css_analysis_output.json
+src/novo_curriculo.tex
+
+# LaTeX auxiliary files (generated during build)
+*.aux
+*.log
+*.out
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.toc
+*.nav
+*.snm
+
+# Duplicate input directory (to be removed)
+inputs/
+
+# IDE / OS specific
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# LaTex and PDF
+*.pdf
+*.tex

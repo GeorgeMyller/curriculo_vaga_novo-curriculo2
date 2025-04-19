@@ -1,0 +1,26 @@
+[project]
+name = "resume-optimizer-crew"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "beautifulsoup4>=4.13.3",
+    "composio-core>=0.7.14",
+    "composio-gemini>=0.7.14",
+    "crewai>=0.108.0",
+    "crewai-tools>=0.38.1",
+    "google-generativeai>=0.8.4",
+    "numpy<2.0",
+    "onnxruntime==1.17.3",
+    "packaging>=24.2",
+    "pylatexenc>=2.10",
+    "pytest>=8.3.5",
+    "requests>=2.32.3",
+    "ruff>=0.11.4",
+    "selenium>=4.31.0",
+    "webdriver-manager>=4.0.2",
+    "embedchain>=0.1.68",
+    "streamlit>=1.44.1",
+    "pyyaml>=6.0.2",
+]

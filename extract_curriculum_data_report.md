@@ -1,0 +1,1 @@
+Não foi possível processar o currículo. O arquivo 'src/inputs/curriculum.tex' ou 'src/inputs/curriculum.pdf' não foi encontrado.
