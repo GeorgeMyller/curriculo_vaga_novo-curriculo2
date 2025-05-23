@@ -49,7 +49,9 @@ css_analysis:
 
 analyze_job_description:
   description: >
-    Analise o conteúdo da descrição do trabalho do URL fornecido {job_url}.
+    Analise a descrição do trabalho fornecida.
+    Se um URL for fornecido ({job_url}), extraia o conteúdo do URL.
+    Se texto for fornecido diretamente ({job_text}), utilize este texto.
     Extraia os requisitos técnicos principais, experiências valorizadas e palavras-chave relevantes.
     Após a análise, gere um relatório detalhado e salve-o como 'analyze_job_description_report.md'.
   expected_output: >
@@ -59,9 +61,51 @@ analyze_job_description:
   output_file: 
     analyze_job_description_report.md
 
+# Novas Tarefas para Análise Semântica
+embed_curriculum:
+  description: >
+    Recebe o texto estruturado do currículo extraído pela tarefa 'extract_curriculum_data'.
+    Utiliza a 'Text Embedding Tool' para gerar um vetor semântico (embedding) para o conteúdo do currículo.
+  expected_output: >
+    Uma lista de floats representando o embedding do currículo.
+    Este output será usado como contexto para a tarefa 'analyze_similarity'.
+  agent: alignment_analyzer
+  context:
+    - extract_curriculum_data
+
+embed_job_description:
+  description: >
+    Recebe o texto da descrição da vaga analisado pela tarefa 'analyze_job_description'.
+    Utiliza a 'Text Embedding Tool' para gerar um vetor semântico (embedding) para o conteúdo da descrição da vaga.
+  expected_output: >
+    Uma lista de floats representando o embedding da descrição da vaga.
+    Este output será usado como contexto para a tarefa 'analyze_similarity'.
+  agent: alignment_analyzer
+  context:
+    - analyze_job_description
+
+analyze_similarity:
+  description: >
+    Recebe os embeddings do currículo (da tarefa 'embed_curriculum') e da descrição da vaga (da tarefa 'embed_job_description').
+    Utiliza a 'Semantic Similarity Tool' para calcular a similaridade de cosseno entre os dois embeddings.
+    Gera um relatório conciso indicando o score de similaridade e uma breve interpretação (ex: 'Alto Alinhamento', 'Alinhamento Moderado', 'Baixo Alinhamento').
+    Identifica e lista os principais pontos fortes (onde a semelhança é alta) e os principais pontos a desenvolver/estudar (onde a semelhança é baixa), baseando-se na análise semântica.
+  expected_output: >
+    Um relatório em markdown ('similarity_analysis_report.md') contendo:
+    - O score de similaridade.
+    - Uma interpretação do score.
+    - Lista de pontos fortes.
+    - Lista de pontos a desenvolver/estudar.
+    Este relatório será usado como contexto para a tarefa 'adjust_resume_for_job' e 'generate_report'.
+  agent: alignment_analyzer
+  context:
+    - embed_curriculum
+    - embed_job_description
+  output_file: similarity_analysis_report.md
+
 adjust_resume_for_job:
   description: >
-    Usando os dados estruturados do currículo da tarefa 'extract_curriculum_data' e o resumo da análise do trabalho da tarefa 'analyze_job_description' como contexto, reescreva e reorganize seções do conteúdo original do currículo para melhorar o alinhamento com o trabalho alvo.
+    Usando os dados estruturados do currículo da tarefa 'extract_curriculum_data', o resumo da análise do trabalho da tarefa 'analyze_job_description', E o relatório de similaridade da tarefa 'analyze_similarity' como contexto, reescreva e reorganize seções do conteúdo original do currículo para melhorar o alinhamento com o trabalho alvo.
     Concentre-se em destacar habilidades e experiências relevantes com base *apenas* no conteúdo do currículo fornecido. Não invente novas informações ou experiências.
     Após o ajuste, gere um relatório detalhado e salve-o como 'adjust_resume_for_job_report.md'.
     Siga estas diretrizes:
@@ -74,13 +118,24 @@ adjust_resume_for_job:
     O conteúdo completo e modificado do currículo como um único bloco de código LaTeX, salvo em um arquivo `.tex`.
     Um arquivo adjust_resume_for_job_report.md
   agent: resume_editor
+  context: # Adicionado analyze_similarity ao contexto
+    - extract_curriculum_data
+    - analyze_job_description
+    - analyze_similarity
   output_file: 
      novo_curriculo.tex
      adjust_resume_for_job_report.md
 
 generate_report:
   description: >
-    Compile um relatório detalhado documentando a execução de cada tarefa anterior ('extract_curriculum_data', 'analyze_job_description', 'adjust_resume_for_job').
+    Compile um relatório detalhado documentando a execução de cada tarefa anterior (
+      'extract_curriculum_data', 
+      'analyze_job_description', 
+      'embed_curriculum', 
+      'embed_job_description', 
+      'analyze_similarity', 
+      'adjust_resume_for_job'
+    ).
     Para cada tarefa, inclua:
     - O agente responsável.
     - O objetivo da tarefa.

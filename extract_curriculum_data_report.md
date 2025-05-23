@@ -1,1 +1,1 @@
-Não foi possível processar o currículo. O arquivo 'src/inputs/curriculum.tex' ou 'src/inputs/curriculum.pdf' não foi encontrado.
+I cannot complete the task.  The provided file path "src/inputs/curriculum.tex" is invalid.  Please provide a valid file path to a curriculum .tex or .pdf file.

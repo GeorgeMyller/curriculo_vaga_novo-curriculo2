@@ -1,1 +1,1 @@
-I need the curriculum (`curriculum.tex` or `curriculum.pdf`) and the job description to complete this task.  Please provide these files.  The current error messages prevent me from accessing and processing the required information.
+I need the curriculum vitae (.tex file) and the job description to complete this task. Please provide these inputs.  Once provided, I will generate the adjusted curriculum in LaTeX format and the `adjust_resume_for_job_report.md` file as requested.
