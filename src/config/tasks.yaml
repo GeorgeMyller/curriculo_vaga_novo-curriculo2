@@ -31,21 +31,9 @@ explain_curriculum_learning:
     Um arquivo explain_curriculum_learning_report.md
   agent: curriculum_reader
   context:
-    - extract_curriculum_data
+    - extract_curriculum_data_task
   output_file: 
    explain_curriculum_learning_report.md
-
-css_analysis:
-  description: >
-    Analyze the CSS of the website provided in {job_url} and extract relevant information using the specified CSS selectors.
-    Após a análise, gere um relatório detalhado e salve-o como 'css_analysis_report.json'.
-  expected_output: >
-    A structured JSON or text file containing the extracted information from the website.
-    Um arquivo css_analysis_report.json
-  async_execution: false
-  agent: css_analyzer
-  output_file: 
-    css_analysis_output.json
 
 analyze_job_description:
   description: >
@@ -71,7 +59,7 @@ embed_curriculum:
     Este output será usado como contexto para a tarefa 'analyze_similarity'.
   agent: alignment_analyzer
   context:
-    - extract_curriculum_data
+    - extract_curriculum_data_task
 
 embed_job_description:
   description: >
@@ -82,7 +70,7 @@ embed_job_description:
     Este output será usado como contexto para a tarefa 'analyze_similarity'.
   agent: alignment_analyzer
   context:
-    - analyze_job_description
+    - analyze_job_description_task
 
 analyze_similarity:
   description: >
@@ -99,8 +87,8 @@ analyze_similarity:
     Este relatório será usado como contexto para a tarefa 'adjust_resume_for_job' e 'generate_report'.
   agent: alignment_analyzer
   context:
-    - embed_curriculum
-    - embed_job_description
+    - embed_curriculum_task
+    - embed_job_description_task
   output_file: similarity_analysis_report.md
 
 adjust_resume_for_job:
@@ -119,9 +107,9 @@ adjust_resume_for_job:
     Um arquivo adjust_resume_for_job_report.md
   agent: resume_editor
   context: # Adicionado analyze_similarity ao contexto
-    - extract_curriculum_data
-    - analyze_job_description
-    - analyze_similarity
+    - extract_curriculum_data_task
+    - analyze_job_description_task
+    - analyze_similarity_task
   output_file: 
      novo_curriculo.tex
      adjust_resume_for_job_report.md

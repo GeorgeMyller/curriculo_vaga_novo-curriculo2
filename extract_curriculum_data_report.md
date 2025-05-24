@@ -1,1 +1,1 @@
-I cannot complete the task.  The provided file path "src/inputs/curriculum.tex" is invalid.  Please provide a valid file path to a curriculum .tex or .pdf file.
+I need the correct file path to the curriculum file (either .tex or .pdf) to complete the task.

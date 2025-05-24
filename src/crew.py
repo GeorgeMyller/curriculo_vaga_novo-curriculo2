@@ -5,15 +5,16 @@ analisa semanticamente a similaridade e produz conteúdo de currículo personali
 """
 import os
 from crewai import Agent, Crew, Process, Task, LLM
-from crewai.project import CrewBase, agent, crew, task
-# from langchain_community.llms import Ollama # Exemplo, ajuste conforme o LLM desejado
-from langchain_google_genai import ChatGoogleGenerativeAI # Importação correta
+from crewai.project import CrewBase, agent, crew, task, tool
+from crewai.agents.agent_builder.base_agent import BaseAgent
+from typing import List
 
 # Importação de ferramentas e configurações necessárias
 from crewai_tools import PDFSearchTool, SeleniumScrapingTool, FileReadTool, FileWriterTool
 
 from src.tools.latex_reader import LatexReaderTool
 from src.tools.job_description_tool import JobDescriptionTool
+from src.tools.pdf_reader import PDFReaderTool
 from src.tools.embedding_tool import EmbeddingTool # Nova ferramenta
 from src.tools.similarity_tool import SimilarityTool # Nova ferramenta
 from dotenv import load_dotenv
@@ -22,25 +23,17 @@ import yaml # Para carregar configs YAML
 # Carrega variáveis de ambiente do arquivo .env
 load_dotenv()
 
-# Configuração do LLM (Exemplo com Gemini)
-# Certifique-se de que GEMINI_API_KEY está no seu .env
-llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash-latest",
-    google_api_key=os.getenv("GEMINI_API_KEY2"), # Adicionado para passar explicitamente a chave
-    # model="gemini/gemini-1.5-flash", # Formato anterior, verificar documentação atual
-    verbose=True,
+# Configuração do LLM (Usando LiteLLM format for CrewAI compatibility)
+# For LiteLLM, Gemini models should be prefixed with 'gemini/'
+llm = LLM(
+    model="gemini/gemini-1.5-flash-latest",
+    api_key=os.getenv("GEMINI_API_KEY"),
     # temperature=0.1 # Ajuste conforme necessário
 )
 
 # Carregar configurações de agentes e tarefas do YAML
-import pathlib
-config_dir = pathlib.Path(__file__).parent / "config"
-
-with open(config_dir / "agents.yaml", 'r') as f:
-    agents_config_yaml = yaml.safe_load(f)
-
-with open(config_dir / "tasks.yaml", 'r') as f:
-    tasks_config_yaml = yaml.safe_load(f)
+# When using @CrewBase decorator, the YAML files are loaded automatically
+# We only need to specify the paths in the class attributes
 
 
 # Instanciação das Ferramentas
@@ -97,18 +90,44 @@ def get_tools():
 @CrewBase
 class ResumeOptimizerCrew():
     """Equipe de Otimização de Currículo - Orquestra agentes para otimizar um currículo com base em descrições de emprego e análise semântica"""
-    agents_config = agents_config_yaml
-    tasks_config = tasks_config_yaml
+    agents_config = 'config/agents.yaml'
+    tasks_config = 'config/tasks.yaml'
 
     def __init__(self):
         # Initialize tools when the crew is created
         self.tools = get_tools()
         super().__init__()
+    
+    # Tool methods for YAML tool references
+    @tool
+    def text_embedding_tool(self):
+        """Text embedding tool for generating semantic embeddings"""
+        return self.tools['embedding_tool']
+    
+    @tool
+    def semantic_similarity_tool(self):
+        """Semantic similarity tool for comparing embeddings"""
+        return self.tools['similarity_tool']
+    
+    @tool
+    def latex_reader_tool(self):
+        """LaTeX reader tool for reading .tex files"""
+        return self.tools['latex_tool']
+    
+    @tool
+    def pdf_search_tool(self):
+        """PDF search tool for reading and searching PDF files"""
+        return self.tools['pdf_tool']
+    
+    @tool
+    def file_writer_tool(self):
+        """File writer tool for writing output files"""
+        return self.tools['file_write_tool']
 
     @agent
     def curriculum_reader(self) -> Agent:
         return Agent(
-            **self.agents_config['curriculum_reader'], # Desempacota a config do YAML
+            **self.agents_config['curriculum_reader'],
             tools=[
                 self.tools['pdf_tool'],
                 self.tools['latex_tool'],
@@ -180,10 +199,8 @@ class ResumeOptimizerCrew():
 
     @task
     def embed_curriculum_task(self) -> Task:
-        task_config = self.tasks_config['embed_curriculum']
         return Task(
-            description=task_config['description'],
-            expected_output=task_config['expected_output'],
+            **self.tasks_config['embed_curriculum'],
             agent=self.alignment_analyzer(),
             context=[self.extract_curriculum_data_task()],
             # O output da tarefa anterior (texto do currículo) será o input desta
@@ -191,46 +208,36 @@ class ResumeOptimizerCrew():
 
     @task
     def embed_job_description_task(self) -> Task:
-        task_config = self.tasks_config['embed_job_description']
         return Task(
-            description=task_config['description'],
-            expected_output=task_config['expected_output'],
+            **self.tasks_config['embed_job_description'],
             agent=self.alignment_analyzer(),
             context=[self.analyze_job_description_task()],
         )
 
     @task
     def analyze_similarity_task(self) -> Task:
-        task_config = self.tasks_config['analyze_similarity']
         return Task(
-            description=task_config['description'],
-            expected_output=task_config['expected_output'],
+            **self.tasks_config['analyze_similarity'],
             agent=self.alignment_analyzer(),
             context=[self.embed_curriculum_task(), self.embed_job_description_task()],
-            output_file=task_config.get('output_file') # Pega do YAML se definido
         )
 
     @task
     def adjust_resume_for_job_task(self) -> Task:
-        task_config = self.tasks_config['adjust_resume_for_job']
         return Task(
-            description=task_config['description'],
-            expected_output=task_config['expected_output'],
+            **self.tasks_config['adjust_resume_for_job'],
             agent=self.resume_editor(),
             context=[
                 self.extract_curriculum_data_task(),
                 self.analyze_job_description_task(),
                 self.analyze_similarity_task()
             ],
-            output_file=task_config.get('output_file') # Pega do YAML se definido
         )
 
     @task
     def generate_report_task(self) -> Task:
-        task_config = self.tasks_config['generate_report']
         return Task(
-            description=task_config['description'],
-            expected_output=task_config['expected_output'],
+            **self.tasks_config['generate_report'],
             agent=self.reporting_agent(),
             context=[
                 self.extract_curriculum_data_task(),
@@ -240,7 +247,14 @@ class ResumeOptimizerCrew():
                 self.analyze_similarity_task(),
                 self.adjust_resume_for_job_task()
             ],
-            output_file=task_config.get('output_file') # Pega do YAML se definido
+        )
+
+    @task
+    def explain_curriculum_learning_task(self) -> Task:
+        return Task(
+            **self.tasks_config['explain_curriculum_learning'],
+            agent=self.curriculum_reader(),
+            context=[self.extract_curriculum_data_task()],
         )
 
     @crew
@@ -255,6 +269,7 @@ class ResumeOptimizerCrew():
             ],
             tasks=[
                 self.extract_curriculum_data_task(),
+                self.explain_curriculum_learning_task(),
                 self.analyze_job_description_task(),
                 self.embed_curriculum_task(),
                 self.embed_job_description_task(),

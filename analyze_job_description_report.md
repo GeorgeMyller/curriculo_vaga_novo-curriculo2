@@ -1,1 +1,1 @@
-I cannot complete the task. The provided URL does not lead to a single job description page, and therefore, I cannot extract the necessary information to generate the requested report.  Please provide a valid URL pointing directly to a job description or provide the job description text directly.
+I cannot complete the task.  Please provide either a job description URL or text, and the path to the curriculum file.
