@@ -8,14 +8,126 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
+import streamlit as st
+import os
+import re
+import tempfile
+import subprocess
 from pathlib import Path
 from dotenv import load_dotenv
+import plotly.graph_objects as go
 
 # Import the streamlit runner module
 from src.streamlit_runner import run_with_streamlit_inputs
 
 # Load environment variables (especially API keys)
 load_dotenv()
+
+# --- Helper Functions ---
+
+def read_report_file(file_path):
+    """Read a report file and return its content"""
+    try:
+        if os.path.exists(file_path):
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return f.read()
+    except Exception as e:
+        st.warning(f"Could not read report file {file_path}: {e}")
+    return None
+    
+
+def extract_similarity_score(report_content):
+    """Extract similarity score from the similarity analysis report"""
+    if not report_content:
+        return None
+    
+    # Look for score patterns in the report
+    import re
+    patterns = [
+        r"[Ss]core[:\s]*([0-9]*\.?[0-9]+)",
+        r"[Ss]imilaridade[:\s]*([0-9]*\.?[0-9]+)",
+        r"([0-9]*\.?[0-9]+)\s*[%]",
+        r"([0-9]*\.?[0-9]+)"
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, report_content)
+        if match:
+            try:
+                score = float(match.group(1))
+                # Normalize score to 0-1 range if it's in percentage
+                if score > 1:
+                    score = score / 100
+                return score
+            except:
+                continue
+    return None
+
+def create_similarity_gauge(score):
+    """Create a gauge chart for similarity score"""
+    if score is None:
+        return None
+    
+    # Create gauge chart
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number+delta",
+        value = score * 100,
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        title = {'text': "Resume-Job Similarity Score (%)"},
+        delta = {'reference': 70},
+        gauge = {
+            'axis': {'range': [None, 100]},
+            'bar': {'color': "darkblue"},
+            'steps': [
+                {'range': [0, 30], 'color': "lightgray"},
+                {'range': [30, 60], 'color': "yellow"},
+                {'range': [60, 85], 'color': "lightgreen"},
+                {'range': [85, 100], 'color': "green"}
+            ],
+            'threshold': {
+                'line': {'color': "red", 'width': 4},
+                'thickness': 0.75,
+                'value': 90
+            }
+        }
+    ))
+    
+    fig.update_layout(height=300)
+    return fig
+
+def create_interpretation_chart(score):
+    """Create a bar chart showing interpretation levels"""
+    if score is None:
+        return None
+    
+    levels = ['Poor Match\n(0-30%)', 'Fair Match\n(30-60%)', 'Good Match\n(60-85%)', 'Excellent Match\n(85-100%)']
+    colors = ['red', 'orange', 'lightgreen', 'green']
+    values = [30, 30, 25, 15]  # Range sizes
+    
+    # Determine current level
+    current_score = score * 100
+    current_level = 0
+    if current_score >= 85:
+        current_level = 3
+    elif current_score >= 60:
+        current_level = 2
+    elif current_score >= 30:
+        current_level = 1
+    
+    # Highlight current level
+    bar_colors = [colors[i] if i == current_level else 'lightgray' for i in range(len(levels))]
+    
+    fig = go.Figure(data=[
+        go.Bar(x=levels, y=values, marker_color=bar_colors, text=[f'{v}%' for v in values], textposition='auto')
+    ])
+    
+    fig.update_layout(
+        title=f"Your Resume Match Level: {levels[current_level]}",
+        yaxis_title="Score Range (%)",
+        height=400
+    )
+    
+    return fig
 
 # --- Streamlit App UI ---
 st.set_page_config(page_title="Resume Optimizer AI", layout="wide")
@@ -223,124 +335,6 @@ if run_button:
                 except Exception as e:
                     st.error(f"An error occurred: {e}")
                     st.exception(e) # Show full traceback for debugging
-
-# --- Similarity Analysis ---
-st.markdown("---")
-st.subheader("Similarity Analysis")
-
-# Helper function to read markdown report files
-def read_report_file(file_path):
-    """Read a report file and return its content"""
-    try:
-        if os.path.exists(file_path):
-            with open(file_path, 'r', encoding='utf-8') as f:
-                return f.read()
-    except Exception as e:
-        st.warning(f"Could not read report file {file_path}: {e}")
-    return None
-
-# Helper function to extract similarity score from report
-def extract_similarity_score(report_content):
-    """Extract similarity score from the similarity analysis report"""
-    if not report_content:
-        return None
-    
-    # Look for score patterns in the report
-    import re
-    patterns = [
-        r"[Ss]core[:\s]*([0-9]*\.?[0-9]+)",
-        r"[Ss]imilaridade[:\s]*([0-9]*\.?[0-9]+)",
-        r"([0-9]*\.?[0-9]+)\s*[%]",
-        r"([0-9]*\.?[0-9]+)"
-    ]
-    
-    for pattern in patterns:
-        match = re.search(pattern, report_content)
-        if match:
-            try:
-                score = float(match.group(1))
-                # Normalize score to 0-1 range if it's in percentage
-                if score > 1:
-                    score = score / 100
-                return score
-            except:
-                continue
-    return None
-
-# Helper function to create similarity visualization
-def create_similarity_gauge(score):
-    """Create a gauge chart for similarity score"""
-    if score is None:
-        return None
-    
-    # Create gauge chart
-    fig = go.Figure(go.Indicator(
-        mode = "gauge+number+delta",
-        value = score * 100,
-        domain = {'x': [0, 1], 'y': [0, 1]},
-        title = {'text': "Resume-Job Similarity Score (%)"},
-        delta = {'reference': 70},
-        gauge = {
-            'axis': {'range': [None, 100]},
-            'bar': {'color': "darkblue"},
-            'steps': [
-                {'range': [0, 30], 'color': "lightgray"},
-                {'range': [30, 60], 'color': "yellow"},
-                {'range': [60, 85], 'color': "lightgreen"},
-                {'range': [85, 100], 'color': "green"}
-            ],
-            'threshold': {
-                'line': {'color': "red", 'width': 4},
-                'thickness': 0.75,
-                'value': 90
-            }
-        }
-    ))
-    
-    fig.update_layout(height=300)
-    return fig
-
-# Helper function to create interpretation chart
-def create_interpretation_chart(score):
-    """Create a bar chart showing interpretation levels"""
-    if score is None:
-        return None
-    
-    levels = ['Poor Match\n(0-30%)', 'Fair Match\n(30-60%)', 'Good Match\n(60-85%)', 'Excellent Match\n(85-100%)']
-    colors = ['red', 'orange', 'lightgreen', 'green']
-    values = [30, 30, 25, 15]  # Range sizes
-    
-    # Determine current level
-    current_score = score * 100
-    current_level = 0
-    if current_score >= 85:
-        current_level = 3
-    elif current_score >= 60:
-        current_level = 2
-    elif current_score >= 30:
-        current_level = 1
-    
-    # Create highlighting
-    bar_colors = ['lightgray'] * 4
-    bar_colors[current_level] = colors[current_level]
-    
-    fig = go.Figure(data=[
-        go.Bar(
-            x=levels,
-            y=values,
-            marker_color=bar_colors,
-            text=[f'{current_score:.1f}%' if i == current_level else '' for i in range(4)],
-            textposition='auto',
-        )
-    ])
-    
-    fig.update_layout(
-        title="Similarity Interpretation",
-        yaxis_title="Score Range (%)",
-        height=300
-    )
-    
-    return fig
 
 # --- Footer/Instructions ---
 st.markdown("---")

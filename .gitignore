@@ -1,50 +1,98 @@
-# Environments
-.venv/
-venv/
-env/
-
-# Python cache
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Secrets
-*.env
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
-# Output directories
-output/
-outputs/
-src/output/
-
-# Database files
-src/db/
-
-# CrewAI Runtime Reports & Intermediate Files (in src/)
-src/*_report.md
-src/css_analysis_output.json
-src/novo_curriculo.tex
-
-# LaTeX auxiliary files (generated during build)
-*.aux
-*.log
-*.out
-*.fdb_latexmk
-*.fls
-*.synctex.gz
-*.toc
-*.nav
-*.snm
-
-# Duplicate input directory (to be removed)
-inputs/
-
-# IDE / OS specific
+# IDE
 .vscode/
 .idea/
-.DS_Store
 *.swp
+*.swo
+*~
 
-# LaTex and PDF
-*.pdf
-*.tex
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Environments
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# CrewAI specific
+.crewai/
+crew_memory/
+
+# Chroma database
+db/
+*.sqlite3
+chroma.sqlite3
+
+# Logs
+*.log
+logs/
+crew_debug.log
+crewai_execution_log.md
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+.cache/
+.cache_*/
+
+# LaTeX temporary files
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.bbl
+*.blg
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# UV lock file (opcional)
+# uv.lock
+
+# Arquivos sensíveis
+.env.local
+.env.production
+secrets.json

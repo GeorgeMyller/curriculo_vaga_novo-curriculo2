@@ -1,24 +1,25 @@
 extract_curriculum_data:
   description: >
-    Leia o arquivo de currículo fornecido via 'src/inputs'.
-    Determine se é um arquivo PDF ou LaTeX e use a ferramenta apropriada (PDFSearchTool para PDF, LatexReaderTool para LaTeX).
+    Leia o arquivo de currículo fornecido via '{resume_path}'.
+    Determine se é um arquivo PDF ou LaTeX. Se for LaTeX (.tex), use a ferramenta LatexReaderTool. 
+    Se for PDF, use a ferramenta PDF reader tool (não a PDFSearchTool).
     Extraia uma lista estruturada contendo:
     - Experiências profissionais
-    - Habilidades
+    - Habilidades técnicas e linguísticas
     - Formação acadêmica
+    - Dados pessoais relevantes
     Após a extração, gere um relatório detalhado e salve-o como 'extract_curriculum_data_report.md'.
-    Além da estrutura dos dados, inclua informações adicionais relevantes, pois as informaçoes destes curriculos devem ser utilizadas para criar o novo curriculo. 
+    As informações extraídas serão utilizadas para criar um novo currículo otimizado.
   expected_output: >
     Um dicionário estruturado com os dados extraídos do currículo (experiências, habilidades, educação).
     O contexto deve ser nomeado 'extract_curriculum_data' para a próxima tarefa.
-    os dados do candidato devem ser extraídos e organizados em um formato estruturado, como JSON ou YAML.
-    O arquivo deve conter informaçoes detalhadas para que sejam aperfeiçoadas nas etapas seguintes.
-    Um arquivo data_curriculum.md
-    Um arquivo extract_curriculum_data_report.md
+    Os dados do candidato devem ser extraídos e organizados em um formato estruturado.
+    O arquivo deve conter informações detalhadas para que sejam aperfeiçoadas nas etapas seguintes.
+    Um arquivo extract_curriculum_data_report.md deve ser criado.
   agent: curriculum_reader
   inputs:
-    resume_path:: str(input_dir / 'curriculum.tex'),
-    file_path': str(input_dir / 'curriculum.pdf'),
+    resume_path: "{resume_path}"
+    file_path: "{file_path}"
     query: "Extract professional experiences and academic background. For skills, search headings like 'Competências Técnicas', 'Competências Linguísticas' or 'Skills', and extract the items listed under these sections."
   output_file: extract_curriculum_data_report.md
 
@@ -31,21 +32,24 @@ explain_curriculum_learning:
     Um arquivo explain_curriculum_learning_report.md
   agent: curriculum_reader
   context:
-    - extract_curriculum_data_task
+    - extract_curriculum_data
   output_file: 
    explain_curriculum_learning_report.md
 
 analyze_job_description:
   description: >
-    Analise a descrição do trabalho fornecida.
-    Se um URL for fornecido ({job_url}), extraia o conteúdo do URL.
-    Se texto for fornecido diretamente ({job_text}), utilize este texto.
+    Analise a descrição do trabalho fornecida através dos inputs de {job_description}.
+    Use o conteúdo fornecido diretamente dos inputs em vez de tentar acessar o URL.
     Extraia os requisitos técnicos principais, experiências valorizadas e palavras-chave relevantes.
+    Identifique competências-chave, tecnologias mencionadas, e tipo de cargo.
     Após a análise, gere um relatório detalhado e salve-o como 'analyze_job_description_report.md'.
   expected_output: >
     Um resumo em tópicos destacando os requisitos principais e aspectos a enfatizar no currículo, com base na análise da descrição do trabalho.
-    Um arquivo analyze_job_description_report.md
+    Inclua: tipo de cargo, tecnologias exigidas, experiências valorizadas, skills técnicas e comportamentais.
+    Um arquivo analyze_job_description_report.md deve ser criado.
   agent: job_analyzer
+  inputs:
+    job_description: "{job_description}"
   output_file: 
     analyze_job_description_report.md
 
@@ -59,7 +63,7 @@ embed_curriculum:
     Este output será usado como contexto para a tarefa 'analyze_similarity'.
   agent: alignment_analyzer
   context:
-    - extract_curriculum_data_task
+    - extract_curriculum_data
 
 embed_job_description:
   description: >
@@ -70,25 +74,45 @@ embed_job_description:
     Este output será usado como contexto para a tarefa 'analyze_similarity'.
   agent: alignment_analyzer
   context:
-    - analyze_job_description_task
+    - analyze_job_description
 
 analyze_similarity:
   description: >
-    Recebe os embeddings do currículo (da tarefa 'embed_curriculum') e da descrição da vaga (da tarefa 'embed_job_description').
-    Utiliza a 'Semantic Similarity Tool' para calcular a similaridade de cosseno entre os dois embeddings.
-    Gera um relatório conciso indicando o score de similaridade e uma breve interpretação (ex: 'Alto Alinhamento', 'Alinhamento Moderado', 'Baixo Alinhamento').
-    Identifica e lista os principais pontos fortes (onde a semelhança é alta) e os principais pontos a desenvolver/estudar (onde a semelhança é baixa), baseando-se na análise semântica.
+    Analise a similaridade semântica entre o currículo e a descrição da vaga usando os embeddings gerados pelas tarefas anteriores.
+    
+    IMPORTANTE: Os embeddings estão disponíveis nos arquivos 'embed_curriculum_report.md' e 'embed_job_description_report.md'.
+    
+    Passos a executar:
+    1. Use a ferramenta 'Semantic Similarity Tool' para calcular a similaridade de cosseno entre os embeddings dos arquivos:
+       - Primeiro parâmetro: 'embed_curriculum_report.md'
+       - Segundo parâmetro: 'embed_job_description_report.md'
+    2. Interprete o score de similaridade:
+       - Score >= 0.8: Alto Alinhamento
+       - Score 0.6-0.79: Alinhamento Moderado-Alto
+       - Score 0.4-0.59: Alinhamento Moderado
+       - Score 0.2-0.39: Alinhamento Baixo-Moderado
+       - Score < 0.2: Baixo Alinhamento
+    3. Com base no score e nos conteúdos analisados das tarefas anteriores (currículo e descrição da vaga), identifique:
+       - Principais pontos fortes (áreas onde há alta correspondência)
+       - Principais pontos a desenvolver/estudar (áreas onde há baixa correspondência)
+    4. Gere um relatório detalhado em markdown.
+    
+    EXEMPLO DE USO DA FERRAMENTA:
+    Use a ferramenta assim: Semantic Similarity Tool com parâmetros:
+    - embedding1: embed_curriculum_report.md
+    - embedding2: embed_job_description_report.md
   expected_output: >
     Um relatório em markdown ('similarity_analysis_report.md') contendo:
-    - O score de similaridade.
-    - Uma interpretação do score.
-    - Lista de pontos fortes.
-    - Lista de pontos a desenvolver/estudar.
-    Este relatório será usado como contexto para a tarefa 'adjust_resume_for_job' e 'generate_report'.
+    - O score de similaridade (valor numérico)
+    - Uma interpretação clara do score (ex: 'Alto Alinhamento')
+    - Lista detalhada de pontos fortes identificados
+    - Lista detalhada de pontos a desenvolver/estudar
+    - Recomendações específicas para melhoria do alinhamento
+    Este relatório será usado como contexto para as tarefas 'adjust_resume_for_job' e 'generate_report'.
   agent: alignment_analyzer
   context:
-    - embed_curriculum_task
-    - embed_job_description_task
+    - embed_curriculum
+    - embed_job_description
   output_file: similarity_analysis_report.md
 
 adjust_resume_for_job:
@@ -107,9 +131,9 @@ adjust_resume_for_job:
     Um arquivo adjust_resume_for_job_report.md
   agent: resume_editor
   context: # Adicionado analyze_similarity ao contexto
-    - extract_curriculum_data_task
-    - analyze_job_description_task
-    - analyze_similarity_task
+    - extract_curriculum_data
+    - analyze_job_description
+    - analyze_similarity
   output_file: 
      novo_curriculo.tex
      adjust_resume_for_job_report.md

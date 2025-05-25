@@ -1,1 +1,0 @@
-I need the correct file path to the curriculum file (either .tex or .pdf) to complete the task.

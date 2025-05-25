@@ -33,13 +33,43 @@ def main():
     
     if not pdf_files and not latex_files:
         print(f"Erro: Nenhum arquivo PDF ou LaTeX encontrado em {input_dir}")
+        print(f"Por favor, coloque um arquivo .pdf ou .tex no diretório {input_dir}")
         sys.exit(1)
     
+    # Determinar o arquivo de currículo principal - Priorizar LaTeX sobre PDF
+    resume_file = latex_files[0] if latex_files else (pdf_files[0] if pdf_files else None)
+    print(f"Usando arquivo de currículo: {resume_file}")
 
     inputs = {
-        'resume_path': str(input_dir / 'curriculum.tex'),
-        'file_path': str(input_dir / 'curriculum.pdf'),
-        'job_url': args.job_url
+        'resume_path': str(resume_file),
+        'file_path': str(resume_file),  # Use the same file for both
+        'job_url': args.job_url,
+        'job_description': """Data Analyst Position
+
+Company: Tech Solutions Inc.
+
+JOB DESCRIPTION:
+We are seeking a skilled Data Analyst to join our growing team. The ideal candidate will have experience in data analysis, statistical modeling, and business intelligence.
+
+KEY RESPONSIBILITIES:
+- Analyze large datasets to identify trends and insights
+- Create reports and dashboards for stakeholders
+- Collaborate with cross-functional teams
+- Develop and maintain data pipelines
+- Present findings to management
+
+REQUIRED SKILLS:
+- Proficiency in Python, SQL, and Excel
+- Experience with data visualization tools (Tableau, Power BI)
+- Knowledge of statistical analysis methods
+- Strong communication and problem-solving skills
+- Bachelor's degree in related field
+
+PREFERRED QUALIFICATIONS:
+- Experience with machine learning algorithms
+- Knowledge of cloud platforms (AWS, Azure)
+- Experience in technology industry""",  # Use the embedded job description
+        'query': "Extract professional experiences, skills, and academic background from the curriculum"
     }
     # Executar a equipe com os inputs necessários
     crew_output = ResumeOptimizerCrew().crew().kickoff(inputs=inputs)

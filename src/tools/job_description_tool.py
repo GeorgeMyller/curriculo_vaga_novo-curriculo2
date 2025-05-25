@@ -16,25 +16,18 @@ class JobDescriptionTool(BaseTool):
 
     def _run(
         self,
-        job_url: Optional[str] = None,
-        job_text: Optional[str] = None
+        job_url: str
     ) -> str:
         """
-        Processes job descriptions from either a URL or direct text
+        Processes job descriptions from a URL
         
         Args:
-            job_url: URL of the job posting (optional)
-            job_text: Raw text of the job description (optional)
+            job_url: URL of the job posting
             
         Returns:
             Job description text
         """
-        # If we have direct text, just return it
-        if job_text:
-            return f"Job Description (provided directly):\n\n{job_text}"
-        
-        # If we have a URL, try to scrape the content
-        elif job_url:
+        if job_url:
             try:
                 # First try with ScrapeWebsiteTool
                 scraper = ScrapeWebsiteTool()
@@ -114,13 +107,13 @@ WHAT WE OFFER:
 
 Error details: {str(e)}"""
         
-        # If neither is provided
+        # If URL is not provided
         else:
-            return "Error: No job description URL or text provided."
+            return "Error: No job description URL provided."
 
 
 @tool("job_description_tool")
-def job_description_tool(job_url: str = None, job_text: str = None) -> str:
-    """Read job descriptions from URLs or analyze provided text"""
+def job_description_tool(job_url: str) -> str:
+    """Read job descriptions from URLs"""
     tool_instance = JobDescriptionTool()
-    return tool_instance._run(job_url=job_url, job_text=job_text)
+    return tool_instance._run(job_url=job_url)

@@ -1,1 +1,0 @@
-I cannot complete the task.  Please provide either a job description URL or text, and the path to the curriculum file.

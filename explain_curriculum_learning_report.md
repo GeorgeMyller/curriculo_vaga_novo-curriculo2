@@ -1,1 +1,0 @@
-I cannot complete the task because the necessary curriculum file (".tex" or ".pdf") is missing.  Please provide the correct file path to the curriculum file.  Only then can I use the specified tools to extract information and generate the requested report.

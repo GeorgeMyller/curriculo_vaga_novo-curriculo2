@@ -14,8 +14,7 @@ job_analyzer:
     Extrair os requisitos principais da vaga
   backstory: >
     Você é um profissional de RH sênior com anos de experiência em seleção. Sabe identificar as verdadeiras necessidades por trás de cada vaga.
-  tool: WebScraperTool
-  
+
 
 resume_editor:
   role: >
@@ -40,7 +39,4 @@ alignment_analyzer: # Novo Agente
     Analisar semanticamente o currículo e a descrição da vaga, identificar pontos fortes e áreas para desenvolvimento, e gerar um relatório de alinhamento.
   backstory: >
     Você é um especialista em recrutamento técnico e desenvolvimento de carreira, com expertise em análise semântica de textos. Seu objetivo é fornecer insights acionáveis para candidatos melhorarem seu posicionamento no mercado.
-  tools:
-    - text_embedding_tool
-    - semantic_similarity_tool
 
