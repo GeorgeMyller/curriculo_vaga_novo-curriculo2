@@ -14,7 +14,15 @@ dev: ## Configura ambiente de desenvolvimento
 	cp .env.example .env
 	@echo "⚠️  Configure suas chaves de API no arquivo .env"
 
-clean: ## Remove arquivos temporários e cache
+clean-reports:
+	@echo "🧹 Movendo reports do diretório raiz para reports/"
+	@find . -maxdepth 1 -name "*_report.md" -exec mv {} reports/ \; 2>/dev/null || true
+	@find . -maxdepth 1 -name "*_report.tex" -exec mv {} reports/ \; 2>/dev/null || true
+	@find . -maxdepth 1 -name "execution_report*" -exec mv {} reports/ \; 2>/dev/null || true
+	@find . -maxdepth 1 -name "generate_report*" -exec mv {} reports/ \; 2>/dev/null || true
+	@echo "✅ Reports organizados!"
+
+clean: clean-reports ## Remove arquivos temporários e cache
 	rm -rf __pycache__/
 	rm -rf .pytest_cache/
 	rm -rf temp/*

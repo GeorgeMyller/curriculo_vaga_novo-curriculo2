@@ -31,6 +31,10 @@ def run_with_streamlit_inputs(resume_file_path, job_url=None, job_text=None, out
     else:
         output_dir = tempfile.mkdtemp()
     
+    # Ensure reports directory exists (for CrewAI task outputs)
+    reports_dir = Path('./reports').absolute()
+    os.makedirs(reports_dir, exist_ok=True)
+    
     # Prepare inputs for the crew - match the YAML task expectations
     job_description = job_text if job_text and job_text.strip() else job_url
     

@@ -28,9 +28,9 @@ def run_health_check():
     core_files = [
         ("src/main.py", "Main CrewAI entry point"),
         ("src/crew.py", "CrewAI orchestration"),
-        ("calculate_similarity.py", "Similarity calculation"),
-        ("generate_final_report.py", "Final report generator"),
-        ("run_pipeline.py", "Pipeline runner"),
+        ("scripts/calculate_similarity.py", "Similarity calculation"),
+        ("scripts/generate_final_report.py", "Final report generator"),
+        ("scripts/run_pipeline.py", "Pipeline runner"),
     ]
     
     core_status = []
@@ -70,7 +70,7 @@ def run_health_check():
         ("reports/similarity_analysis_report.md", "Similarity analysis"),
         ("reports/adjust_resume_for_job_report.md", "Optimized resume"),
         ("reports/execution_report.md", "Execution log"),
-        ("FINAL_STATUS_REPORT.md", "Final status report"),
+        ("docs/FINAL_STATUS_REPORT.md", "Final status report"),
     ]
     
     report_status = []
@@ -81,7 +81,9 @@ def run_health_check():
     print("\n🔧 Custom Tools:")
     tool_files = [
         ("src/tools/latex_reader.py", "LaTeX reader tool"),
-        ("src/tools/scraping_tool.py", "Web scraping tool"),
+        ("src/tools/job_description_tool.py", "Job description tool"),
+        ("src/tools/similarity_tool.py", "Similarity calculation tool"),
+        ("src/tools/embedding_tool.py", "Embedding generation tool"),
     ]
     
     tool_status = []

@@ -1,108 +1,112 @@
-# Relatório de Execução das Tarefas
+# Detailed Execution Report
 
-Este relatório documenta a execução das tarefas envolvidas no processo de análise do currículo e da descrição da vaga.
+This report documents the execution of each task in the resume processing pipeline.
 
-## Tarefa: extract_curriculum_data
+## Task: extract_curriculum_data
 
-* **Agente Responsável:**  [Inserir nome do agente aqui]
-* **Objetivo:** Extrair dados relevantes do currículo do candidato.
-* **Resultados:** Os dados do currículo foram extraídos com sucesso e estão disponíveis no formato JSON.  Veja o conteúdo abaixo:
+* **Agent:** Data Extraction Agent
+* **Objective:** Extract relevant information from the candidate's resume.
+* **Results:** Successfully extracted personal information, professional summary, professional experience, education, technical skills, and certifications.  See Appendix A for the detailed extracted data.
+* **Observations:** No challenges encountered during execution.
+
+## Task: analyze_job_description
+
+* **Agent:** Job Description Analysis Agent
+* **Objective:** Analyze the job description to identify key skills and requirements.
+* **Results:**  This task's output is not available in the current context.
+* **Observations:** This step's results are needed to proceed with the similarity analysis.
+
+## Task: embed_curriculum
+
+* **Agent:** Embedding Agent
+* **Objective:** Generate an embedding vector representing the candidate's resume.
+* **Results:** This task's output is not available in the current context.
+* **Observations:** The embedding vector is necessary for similarity comparison.
+
+## Task: embed_job_description
+
+* **Agent:** Embedding Agent
+* **Objective:** Generate an embedding vector representing the job description.
+* **Results:** This task's output is not available in the current context.
+* **Observations:**  The embedding vector is necessary for similarity comparison.
+
+## Task: analyze_similarity
+
+* **Agent:** Semantic Similarity Agent
+* **Objective:** Compute the similarity score between the resume and job description embeddings.
+* **Results:** This task's output is not available in the current context.
+* **Observations:** Requires the outputs of `embed_curriculum` and `embed_job_description`.
+
+## Task: adjust_resume_for_job
+
+* **Agent:** Resume Adjustment Agent
+* **Objective:** Tailor the resume to better match the job description based on the similarity analysis.
+* **Results:** This task's output is not available in the current context.  This step requires the output of `analyze_similarity`.
+* **Observations:** This step depends on the previous steps' successful execution and requires a similarity score as input.
+
+## Appendix A: Extracted Curriculum Data
+
 ```json
 {
   "extract_curriculum_data": {
-    "dados_pessoais": {
-      "nome": "George Myller Esteves de Souza",
-      "endereco": "Forca - Aveiro",
-      "contatos": ["(+351) 912331561", "george.myller@gmail.com"],
-      "linkedin": "linkedin.com/in/george-m-souza",
-      "github": "github.com/GeorgeMyller"
+    "personal_info": {
+      "name": "GEORGE SOUZA",
+      "email": "george.souza@email.com",
+      "phone": "+1 (555) 123-4567"
     },
-    "formacao_academica": [
+    "professional_summary": "Experienced Software Engineer with 8+ years of experience in full-stack development, cloud architecture, and team leadership. Proven track record of delivering scalable solutions using modern technologies including Python, React, AWS, and microservices architecture.",
+    "professional_experience": [
       {
-        "titulo": "Mestrado em Ciências Veterinárias",
-        "instituicao": "Universidade Federal do Paraná (UFPR)",
-        "ano": 2020
+        "title": "Senior Software Engineer",
+        "company": "Tech Solutions Inc.",
+        "years": "2020 - Present",
+        "description": [
+          "Led a team of 5 developers in the design and implementation of a microservices-based e-commerce platform",
+          "Reduced system latency by 40% through optimization of database queries and Redis caching",
+          "Implemented CI/CD pipelines using Jenkins and Docker",
+          "Mentored junior developers and conducted code reviews"
+        ]
       },
       {
-        "titulo": "Licenciatura em Ciências Biológicas",
-        "instituicao": "Universidade Federal de Minas Gerais (UFMG)",
-        "ano": 2015
+        "title": "Software Engineer",
+        "company": "Digital Innovations Ltd.",
+        "years": "2018 - 2020",
+        "description": [
+          "Developed REST APIs using Python/Django for financial services application",
+          "Collaborated with product managers and designers to implement user-facing features using React",
+          "Migrated legacy monolith to microservices architecture",
+          "Participated in agile development processes"
+        ]
+      },
+      {
+        "title": "Junior Software Developer",
+        "company": "StartupCo",
+        "years": "2016 - 2018",
+        "description": [
+          "Built responsive web applications using JavaScript, HTML5, and CSS3",
+          "Integrated third-party APIs and payment processing systems",
+          "Participated in bug fixes and feature enhancements"
+        ]
       }
     ],
-    "experiencia_profissional": [
-      {
-        "cargo": "Desenvolvedor de Software",
-        "empresa": "Freelancer",
-        "periodo": "Janeiro/2024 - Atual",
-        "descricao": "Desenvolvimento de soluções em Python para automação de processos, análise de dados e integração de APIs. Criação de dashboards interativos com Streamlit e visualizações personalizadas para tomada de decisão baseada em dados. Projetos envolvendo Machine Learning, LLMs (Large Language Models) e integração com ferramentas como CrewAI e API Gemini. Desenvolvimento de chatbots inteligentes e automações para mídias sociais, utilizando Flask e bibliotecas de IA. Utilização de versionamento com Git e containers básicos com Docker. Aplicação de conceitos de ETL, automação de relatórios, desenvolvimento de APIs RESTful e manipulação de dados com Pandas e NumPy."
-      },
-      {
-        "cargo": "Operador de Logística",
-        "empresa": "Siemens Gamesa Rewable Energy Blades S.A",
-        "periodo": "Maio/2022 - Maio/2024",
-        "descricao": "Atuação em ambiente fabril com foco na otimização de processos logísticos e eficiência operacional. Experiência com controle de estoque, movimentação de materiais, gestão de insumos e suporte a sistemas integrados de produção."
-      },
-      {
-        "cargo": "Biólogo Responsável",
-        "empresa": "Animais Silvestres e Exóticos DinoPet",
-        "periodo": "Março/2018 - Janeiro/2022",
-        "descricao": "Gestão de equipe (contratação, treinamento e acompanhamento de estagiários e bolsistas). Elaboração de relatórios técnicos e científicos e condução de pesquisas analíticas para aumento de eficiência reprodutiva. Controle de estoque, atendimento ao cliente, vendas e responsável pelo marketing digital da empresa. Planejamento estratégico e tomada de decisão baseada em análise de indicadores."
-      }
-    ],
-    "cursos": [
-      "Microcredencial em Fundamentos de Aprendizagem Automática - Universidade de Aveiro (2025)",
-      "Fundamentos de Data Science e Inteligência Artificial - Data Science Academy (2024)",
-      "Microcredencial em Programação em Python para análise de dados - Universidade de Aveiro (2024)",
-      "Fundamentos de Engenharia de Dados - Data Science Academy (2024)",
-      "Imersão Inteligência Artificial 2ª Edição - Alura (2024)",
-      "Initial Course on CrewAI - DeepLearning.AI (2024)",
-      "Fundamentos de Linguagem Python para Análise de Dados e Data Science - Data Science Academy (2024)",
-      "Agentes Inteligentes - CrewAI - Canal Sandeco (2025)",
-      "Python para Inteligência Artificial - Canal Sandeco (2025)"
-    ],
-    "idiomas": {
-      "ingles": "Intermediário - B2"
+    "education": {
+      "degree": "Bachelor of Science in Computer Science",
+      "university": "University of Technology",
+      "years": "2012 - 2016",
+      "gpa": "3.7/4.0"
     },
-    "informacoes_adicionais": [
-      "Podcaster Fundador e Co-Fundador: Tribo Reptiliana e Meu Exótico Podcast (2020 – 2023)",
-      "Atuação como Professor Universitário – UniCesumar (2020)"
+    "technical_skills": {
+      "programming_languages": ["Python", "JavaScript", "TypeScript", "Java", "Go"],
+      "frameworks_libraries": ["React", "Node.js", "Django", "Flask", "Spring Boot"],
+      "cloud_devops": ["AWS (EC2, S3, Lambda, RDS)", "Docker", "Kubernetes", "Terraform"],
+      "databases": ["PostgreSQL", "MySQL", "MongoDB", "Redis"],
+      "tools_technologies": ["Git", "Jenkins", "Grafana", "Elasticsearch", "Kafka"]
+    },
+    "certifications": [
+      "AWS Certified Solutions Architect - Associate (2021)",
+      "Certified Kubernetes Administrator (CKA) (2020)",
+      "Google Cloud Professional Cloud Architect (2019)"
     ]
   }
 }
 ```
-* **Observações:** Nenhum problema encontrado.
-
-## Tarefa: analyze_job_description
-
-* **Agente Responsável:** [Inserir nome do agente aqui]
-* **Objetivo:** Analisar a descrição da vaga para identificar as habilidades e experiências necessárias.
-* **Resultados:**  A descrição da vaga foi analisada e um relatório foi gerado com as tecnologias, habilidades e experiências valorizadas. O relatório está disponível em `analyze_job_description_report.md`.
-* **Observações:** Nenhum problema encontrado.
-
-## Tarefa: embed_curriculum
-
-* **Agente Responsável:** [Inserir nome do agente aqui]
-* **Objetivo:** Gerar embeddings para o currículo.
-* **Resultados:** Embeddings gerados com sucesso.  Detalhes técnicos omitidos por brevidade. 
-* **Observações:** Nenhum problema encontrado.
-
-## Tarefa: embed_job_description
-
-* **Agente Responsável:** [Inserir nome do agente aqui]
-* **Objetivo:** Gerar embeddings para a descrição da vaga.
-* **Resultados:** Embeddings gerados com sucesso. Detalhes técnicos omitidos por brevidade.
-* **Observações:** Nenhum problema encontrado.
-
-## Tarefa: analyze_similarity
-
-* **Agente Responsável:** [Inserir nome do agente aqui]
-* **Objetivo:** Analisar a similaridade entre os embeddings do currículo e da descrição da vaga.
-* **Resultados:** A análise de similaridade foi realizada, mas os resultados numéricos foram omitidos para preservar a confidencialidade.  A análise indicou [inserir avaliação qualitativa da similaridade, e.g.,  uma boa correspondência entre as habilidades do candidato e os requisitos da vaga].
-* **Observações:**  A análise utilizou [inserir método de análise de similaridade].
-
-## Tarefa: adjust_resume_for_job
-
-* **Agente Responsável:** [Inserir nome do agente aqui]
-* **Objetivo:** Ajustar o currículo do candidato para melhor se adequar à descrição da vaga.
-* **Resultados:** O currículo foi ajustado e um novo currículo em formato LaTeX foi gerado em `resume_adjusted.tex`.  Este currículo destaca as habilidades e experiências mais relevantes para a vaga.
-* **Observações:**  As principais alterações incluíram [inserir descrição das alterações].

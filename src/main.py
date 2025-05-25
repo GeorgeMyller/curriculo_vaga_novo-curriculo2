@@ -24,8 +24,11 @@ def main():
     # Criar diretórios se não existirem
     input_dir = Path(args.input_dir).absolute()
     output_dir = Path(args.output_dir).absolute()
+    reports_dir = Path('./reports').absolute()  # Ensure reports directory exists
+    
     os.makedirs(input_dir, exist_ok=True)
     os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(reports_dir, exist_ok=True)  # Create reports directory
     
     # Verificar se existem arquivos no diretório de entrada
     pdf_files = list(input_dir.glob('*.pdf'))

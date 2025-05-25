@@ -17,7 +17,7 @@ from src.tools.latex_reader import LatexReaderTool
 from src.tools.job_description_tool import JobDescriptionTool
 from src.tools.pdf_reader import PDFReaderTool
 from src.tools.embedding_tool import EmbeddingTool # Nova ferramenta
-from src.tools.similarity_tool import SimilarityTool # Nova ferramenta
+from src.tools.similarity_tool import calculate_semantic_similarity # Nova ferramenta
 from dotenv import load_dotenv
 
 # Carrega variáveis de ambiente do arquivo .env
@@ -52,7 +52,7 @@ def get_tools():
     file_write_tool = FileWriterTool()
     embedding_tool = EmbeddingTool() # Usa GEMINI_API_KEY do .env internamente
     file_read_tool = FileReadTool() # Para ler o conteúdo do currículo e da vaga para embedding
-    similarity_tool = SimilarityTool() # Nova ferramenta - Moved instantiation before CrewBase
+    similarity_tool = calculate_semantic_similarity # Nova ferramenta - Now it's a function, not a class
     
     return {
         'selenium_tool': selenium_tool,
@@ -178,10 +178,12 @@ class ResumeOptimizerCrew():
         config = self._tasks_config['extract_curriculum_data'].copy()
         # Remove inputs from config as they should be passed via kickoff
         config.pop('inputs', None)
-        # Handle output_file - use primary output file
+        # Handle output_file - use primary output file with absolute path
         output_file = config.get('output_file', 'extract_curriculum_data_report.md')
         if isinstance(output_file, list):
             output_file = output_file[0] if output_file else 'extract_curriculum_data_report.md'
+        # Ensure absolute path to reports directory
+        output_file = os.path.join(os.getcwd(), output_file)
         return Task(
             description=config['description'],
             expected_output=config['expected_output'],
@@ -192,10 +194,12 @@ class ResumeOptimizerCrew():
     @task
     def analyze_job_description(self) -> Task:
         config = self._tasks_config['analyze_job_description'].copy()
-        # Handle output_file - use primary output file
+        # Handle output_file - use primary output file with absolute path
         output_file = config.get('output_file', 'analyze_job_description_report.md')
         if isinstance(output_file, list):
             output_file = output_file[0] if output_file else 'analyze_job_description_report.md'
+        # Ensure absolute path to reports directory
+        output_file = os.path.join(os.getcwd(), output_file)
         return Task(
             description=config['description'],
             expected_output=config['expected_output'],
@@ -206,10 +210,12 @@ class ResumeOptimizerCrew():
     @task
     def embed_curriculum(self) -> Task:
         config = self._tasks_config['embed_curriculum'].copy()
-        # Handle output_file - use primary output file
+        # Handle output_file - use primary output file with absolute path
         output_file = config.get('output_file', 'embed_curriculum_report.md')
         if isinstance(output_file, list):
             output_file = output_file[0] if output_file else 'embed_curriculum_report.md'
+        # Ensure absolute path to reports directory
+        output_file = os.path.join(os.getcwd(), output_file)
         return Task(
             description=config['description'],
             expected_output=config['expected_output'],
@@ -221,10 +227,12 @@ class ResumeOptimizerCrew():
     @task
     def embed_job_description(self) -> Task:
         config = self._tasks_config['embed_job_description'].copy()
-        # Handle output_file - use primary output file
+        # Handle output_file - use primary output file with absolute path
         output_file = config.get('output_file', 'embed_job_description_report.md')
         if isinstance(output_file, list):
             output_file = output_file[0] if output_file else 'embed_job_description_report.md'
+        # Ensure absolute path to reports directory
+        output_file = os.path.join(os.getcwd(), output_file)
         return Task(
             description=config['description'],
             expected_output=config['expected_output'],
@@ -236,10 +244,12 @@ class ResumeOptimizerCrew():
     @task
     def analyze_similarity(self) -> Task:
         config = self._tasks_config['analyze_similarity'].copy()
-        # Handle output_file - use primary output file
+        # Handle output_file - use primary output file with absolute path
         output_file = config.get('output_file', 'similarity_analysis_report.md')
         if isinstance(output_file, list):
             output_file = output_file[0] if output_file else 'similarity_analysis_report.md'
+        # Ensure absolute path to reports directory
+        output_file = os.path.join(os.getcwd(), output_file)
         return Task(
             description=config['description'],
             expected_output=config['expected_output'],
@@ -251,10 +261,12 @@ class ResumeOptimizerCrew():
     @task
     def adjust_resume_for_job(self) -> Task:
         config = self._tasks_config['adjust_resume_for_job'].copy()
-        # Handle output_file - use primary output file (the LaTeX file)
-        output_file = config.get('output_file', 'novo_curriculo.tex')
+        # Handle output_file - use primary output file (the LaTeX file) with absolute path
+        output_file = config.get('output_file', 'adjust_resume_for_job_report.md')
         if isinstance(output_file, list):
-            output_file = output_file[0] if output_file else 'novo_curriculo.tex'
+            output_file = output_file[0] if output_file else 'adjust_resume_for_job_report.md'
+        # Ensure absolute path to reports directory
+        output_file = os.path.join(os.getcwd(), output_file)
         return Task(
             description=config['description'],
             expected_output=config['expected_output'],
@@ -270,10 +282,12 @@ class ResumeOptimizerCrew():
     @task
     def generate_report(self) -> Task:
         config = self._tasks_config['generate_report'].copy()
-        # Handle output_file - use primary output file
+        # Handle output_file - use primary output file with absolute path
         output_file = config.get('output_file', 'execution_report.md')
         if isinstance(output_file, list):
             output_file = output_file[0] if output_file else 'execution_report.md'
+        # Ensure absolute path to reports directory
+        output_file = os.path.join(os.getcwd(), output_file)
         return Task(
             description=config['description'],
             expected_output=config['expected_output'],
@@ -292,10 +306,12 @@ class ResumeOptimizerCrew():
     @task
     def explain_curriculum_learning(self) -> Task:
         config = self._tasks_config['explain_curriculum_learning'].copy()
-        # Handle output_file - use primary output file
+        # Handle output_file - use primary output file with absolute path
         output_file = config.get('output_file', 'explain_curriculum_learning_report.md')
         if isinstance(output_file, list):
             output_file = output_file[0] if output_file else 'explain_curriculum_learning_report.md'
+        # Ensure absolute path to reports directory
+        output_file = os.path.join(os.getcwd(), output_file)
         return Task(
             description=config['description'],
             expected_output=config['expected_output'],
