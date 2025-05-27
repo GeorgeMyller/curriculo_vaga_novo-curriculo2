@@ -41,15 +41,26 @@ explain_curriculum_learning:
 
 analyze_job_description:
   description: >
-    Analise a descrição do trabalho fornecida através dos inputs de {job_description}.
-    Use o conteúdo fornecido diretamente dos inputs em vez de tentar acessar o URL.
-    Extraia os requisitos técnicos principais, experiências valorizadas e palavras-chave relevantes.
-    Identifique competências-chave, tecnologias mencionadas, e tipo de cargo.
-    Após a análise, gere um relatório detalhado e salve-o como 'analyze_job_description_report.md'.
+    ATENÇÃO: A descrição da vaga será fornecida diretamente via input 'job_description' da tarefa.
+    NÃO use JobDescriptionTool nem tente ler arquivos. A informação já está disponível.
+    
+    PASSOS A SEGUIR:
+    1. Use o conteúdo fornecido no input 'job_description' 
+    2. Analise os requisitos técnicos, experiências e palavras-chave
+    3. Identifique: competências-chave, tecnologias, tipo de cargo
+    4. Crie um relatório markdown com sua análise
+    5. Salve usando File Writer Tool:
+       - filename: "analyze_job_description_report.md"
+       - content: [seu relatório completo em texto markdown]
+       - directory: "reports"
+       - overwrite: "true"
+    
+    IMPORTANTE: NÃO use outras ferramentas além do File Writer Tool.
+    O input job_description já contém todas as informações necessárias.
   expected_output: >
-    Um resumo em tópicos destacando os requisitos principais e aspectos a enfatizar no currículo, com base na análise da descrição do trabalho.
+    Um resumo em tópicos destacando os requisitos principais e aspectos a enfatizar no currículo.
     Inclua: tipo de cargo, tecnologias exigidas, experiências valorizadas, skills técnicas e comportamentais.
-    Um arquivo analyze_job_description_report.md deve ser criado.
+    Um arquivo analyze_job_description_report.md deve ser criado usando File Writer Tool.
   agent: job_analyzer
   inputs:
     job_description: "{job_description}"

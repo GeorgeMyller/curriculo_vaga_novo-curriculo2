@@ -1,14 +1,19 @@
+#!/usr/bin/env python3
 """
-Tool for calculating semantic similarity between two text embeddings.
+Test the actual similarity tool with proper imports.
 """
-from typing import List, Union, Any, Optional
-import numpy as np
+
+import os
+import sys
+from pathlib import Path
 import ast
 import re
-import os
-from crewai.tools import tool
+import numpy as np
 
-def _extract_embedding_from_text(text: str) -> List[float]:
+# Add src to path
+sys.path.insert(0, str(Path(__file__).parent / "src"))
+
+def _extract_embedding_from_text(text: str):
     """
     Extract embedding from text that might contain markdown or other formatting.
     """
@@ -69,7 +74,7 @@ def _extract_embedding_from_text(text: str) -> List[float]:
     
     return []
 
-def _process_input(input_data: Any) -> List[float]:
+def _process_input(input_data):
     """
     Process various input formats to extract embedding vectors.
     """
@@ -102,74 +107,70 @@ def _process_input(input_data: Any) -> List[float]:
         # Try to convert to string and extract
         return _extract_embedding_from_text(str(input_data))
 
-@tool("Semantic Similarity Tool")
-def calculate_semantic_similarity(
-    embedding1: str,
-    embedding2: str = "reports/embed_job_description_report.md",
-    context_data: str = ""
-) -> float:
-    """
-    Calculates the cosine similarity between two semantic vector embeddings.
-    Can extract embeddings from file paths or direct text.
+def test_direct_similarity():
+    """Test similarity calculation directly."""
+    print("=== Testing Direct Similarity Calculation ===")
     
-    Args:
-        embedding1: The first text embedding (file path or text). Required.
-        embedding2: The second text embedding (file path or text). Defaults to job description.
-        context_data: Additional context or fallback data. Optional.
+    # Test the embeddings extraction first
+    print("\nExtracting curriculum embedding...")
+    emb1 = _process_input("reports/embed_curriculum_report.md")
+    print(f"Curriculum embedding length: {len(emb1)}")
     
-    Returns:
-        The cosine similarity score (float between -1 and 1).
-    """
-    # Handle empty values for embedding2
-    if not embedding2 or embedding2 in ["", "None", "null"]:
-        embedding2 = "reports/embed_job_description_report.md"
+    print("\nExtracting job description embedding...")
+    emb2 = _process_input("reports/embed_job_description_report.md")
+    print(f"Job description embedding length: {len(emb2)}")
     
-    # Handle empty values for context_data  
-    if not context_data or context_data in ["", "None", "null"]:
-        context_data = ""
-    
-    # Initialize variables
-    emb1 = None
-    emb2 = None
-    
-    # Special handling for the case where embedding1 contains two file paths separated by comma or space
-    if isinstance(embedding1, str) and (' ' in embedding1 or ',' in embedding1):
-        # Check if embedding1 contains multiple file paths or references
-        parts = embedding1.replace(',', ' ').split()
-        file_parts = [p for p in parts if p.endswith('.md') or p.endswith('.txt')]
-        
-        if len(file_parts) >= 2:
-            print(f"Detected two file paths in embedding1: {file_parts[:2]}")
-            emb1 = _process_input(file_parts[0])
-            emb2 = _process_input(file_parts[1])
-        else:
-            # Process embedding1 and use the provided embedding2
-            emb1 = _process_input(embedding1)
-            emb2 = _process_input(embedding2)
-    else:
-        # Process the provided embeddings normally
-        emb1 = _process_input(embedding1)
-        emb2 = _process_input(embedding2)
-
     if not emb1 or not emb2:
-        print("Error: One or both embeddings are empty or could not be extracted.")
-        print(f"Embedding 1 length: {len(emb1) if emb1 else 0}")
-        print(f"Embedding 2 length: {len(emb2) if emb2 else 0}")
+        print("❌ One or both embeddings are empty")
         return 0.0
-
+    
+    # Calculate similarity
     vec1 = np.array(emb1)
     vec2 = np.array(emb2)
-
+    
     if vec1.shape != vec2.shape:
-        # If dimensions don't match, truncate both to the smaller dimension
         min_dim = min(len(vec1), len(vec2))
         vec1 = vec1[:min_dim]
         vec2 = vec2[:min_dim]
-        print(f"Warning: Embeddings had different dimensions, truncated both to {min_dim} dimensions")
+        print(f"Warning: Truncated both to {min_dim} dimensions")
     
     if np.linalg.norm(vec1) == 0 or np.linalg.norm(vec2) == 0:
-        print("Error: One or both embeddings are zero vectors.")
+        print("❌ Zero vector detected")
         return 0.0
-
+    
     cosine_similarity = np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
+    print(f"✅ Similarity calculated: {cosine_similarity}")
     return float(cosine_similarity)
+
+def main():
+    """Run the test."""
+    print("Testing Similarity Tool with Real Extraction Logic")
+    print("=" * 60)
+    
+    # Check files exist
+    curriculum_file = "reports/embed_curriculum_report.md"
+    job_file = "reports/embed_job_description_report.md"
+    
+    if not os.path.exists(curriculum_file):
+        print(f"❌ Missing: {curriculum_file}")
+        return
+    
+    if not os.path.exists(job_file):
+        print(f"❌ Missing: {job_file}")
+        return
+    
+    print(f"✅ Found: {curriculum_file}")
+    print(f"✅ Found: {job_file}")
+    
+    result = test_direct_similarity()
+    
+    print("\n" + "=" * 60)
+    print(f"Final result: {result}")
+    
+    if result > 0:
+        print("✅ The similarity tool logic is working correctly!")
+    else:
+        print("❌ The similarity tool needs further debugging.")
+
+if __name__ == "__main__":
+    main()

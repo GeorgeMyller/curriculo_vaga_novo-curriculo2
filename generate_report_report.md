@@ -1,4 +1,3 @@
-```
 # Relatório de Execução das Tarefas
 
 Este relatório documenta a execução das tarefas envolvidas no processo de análise de currículo e descrição de vaga.
@@ -124,5 +123,4 @@ Este relatório documenta a execução das tarefas envolvidas no processo de an�
     ]
   }
 }
-```
 ```

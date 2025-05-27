@@ -1,18 +1,33 @@
+```json
 {
   "extract_curriculum_data": {
-    "dados_pessoais": {
-      "nome": "GEORGE MYLLER ESTEVES DE SOUZA",
-      "endereço": "Forca - Aveiro",
-      "contatos": "(+351) 912331561 | george.myller@gmail.com",
-      "linkedin": "linkedin.com/in/george-m-souza",
-      "github": "github.com/GeorgeMyller"
+    "Dados Pessoais": {
+      "Nome": "GEORGE MYLLER ESTEVES DE SOUZA",
+      "Endereço": "Forca - Aveiro",
+      "Contatos": "(+351) 912331561 | george.myller@gmail.com",
+      "LinkedIn": "linkedin.com/in/george-m-souza",
+      "GitHub": "github.com/GeorgeMyller"
     },
-    "experiencias_profissionais": [
+    "Objetivo": "Atuar na área de Tecnologia da Informação, com foco em Desenvolvimento de Software, Análise de Dados e Inteligência Artificial.",
+    "Resumo Profissional": "Profissional com Mestrado em Ciências Veterinárias (UFPR) e Licenciatura em Ciências Biológicas (UFMG), em transição estratégica para a área de Tecnologia da Informação, com foco em Desenvolvimento de Software, Análise de Dados e Inteligência Artificial. Atuação atual como Desenvolvedor Freelancer, com experiência prática no desenvolvimento de soluções em Python para automação de processos, integração de APIs, análise de dados e machine learning. Conduzi projetos com LLMs, CrewAI e API Gemini, além da criação de dashboards interativos, chatbots inteligentes e aplicações com Streamlit e Flask. Domino ferramentas como Git, Docker (básico) e SQL (básico), além de bibliotecas como Pandas, NumPy e Scikit-learn. Possuo ampla qualificação técnica em Data Science, Engenharia de Dados, Inteligência Artificial e Python para análise de dados, por instituições como Universidade de Aveiro, Data Science Academy, Alura e DeepLearning.AI. Trago uma bagagem consistente em gestão, liderança e planejamento estratégico, com vivência como Biólogo Responsável e Professor Universitário. Tenho perfil analítico, autônomo e orientado a resultados. Inglês nível B2.",
+    "Formação Acadêmica": [
       {
-        "cargo": "Desenvolvedor de Software",
-        "empresa": "Freelancer",
-        "periodo": "Janeiro/2024 – Atual",
-        "responsabilidades": [
+        "Curso": "Mestrado em Ciências Veterinárias",
+        "Instituição": "Universidade Federal do Paraná UFPR",
+        "Ano": 2020
+      },
+      {
+        "Curso": "Licenciatura em Ciências Biológicas",
+        "Instituição": "Universidade Federal de Minas Gerais UFMG",
+        "Ano": 2015
+      }
+    ],
+    "Experiência Profissional": [
+      {
+        "Cargo": "Desenvolvedor de Software",
+        "Empresa": "Freelancer",
+        "Periodo": "Janeiro/2024 – Atual",
+        "Responsabilidades": [
           "Desenvolvimento de soluções em Python para automação de processos, análise de dados e integração de APIs.",
           "Criação de dashboards interativos com Streamlit e visualizações personalizadas para tomada de decisão baseada em dados.",
           "Projetos envolvendo Machine Learning, LLMs (Large Language Models) e integração com ferramentas como CrewAI e API Gemini.",
@@ -22,19 +37,19 @@
         ]
       },
       {
-        "cargo": "Operador de Logística",
-        "empresa": "Siemens Gamesa Rewable Energy Blades S.A",
-        "periodo": "Maio/2022 – Maio/2024",
-        "responsabilidades": [
+        "Cargo": "Operador de Logística",
+        "Empresa": "Siemens Gamesa Rewable Energy Blades S.A",
+        "Periodo": "Maio/2022 – Maio/2024",
+        "Responsabilidades": [
           "Atuação em ambiente fabril com foco na otimização de processos logísticos e eficiência operacional.",
           "Experiência com controle de estoque, movimentação de materiais, gestão de insumos e suporte a sistemas integrados de produção."
         ]
       },
       {
-        "cargo": "Biólogo Responsável",
-        "empresa": "Animais Silvestres e Exóticos DinoPet",
-        "periodo": "Março/2018 – Janeiro/2022",
-        "responsabilidades": [
+        "Cargo": "Biólogo Responsável",
+        "Empresa": "Animais Silvestres e Exóticos DinoPet",
+        "Periodo": "Março/2018 – Janeiro/2022",
+        "Responsabilidades": [
           "Gestão de equipe (contratação, treinamento e acompanhamento de estagiários e bolsistas).",
           "Elaboração de relatórios técnicos e científicos e condução de pesquisas analíticas para aumento de eficiência reprodutiva.",
           "Controle de estoque, atendimento ao cliente, vendas e responsável pelo marketing digital da empresa.",
@@ -42,42 +57,7 @@
         ]
       }
     ],
-    "habilidades_tecnicas": [
-      "Python",
-      "Streamlit",
-      "Flask",
-      "Git",
-      "Docker",
-      "SQL",
-      "Pandas",
-      "NumPy",
-      "Scikit-learn",
-      "LLMs",
-      "CrewAI",
-      "API Gemini",
-      "ETL",
-      "APIs RESTful",
-      "Machine Learning",
-      "Data Science",
-      "Engenharia de Dados",
-      "Inteligência Artificial"
-    ],
-    "habilidades_linguisticas": {
-      "inglês": "Intermediário - B2"
-    },
-    "formacao_academica": [
-      {
-        "curso": "Mestrado em Ciências Veterinárias",
-        "instituicao": "Universidade Federal do Paraná UFPR",
-        "ano": 2020
-      },
-      {
-        "curso": "Licenciatura em Ciências Biológicas",
-        "instituicao": "Universidade Federal de Minas Gerais UFMG",
-        "ano": 2015
-      }
-    ],
-    "cursos_aperfeicoamento": [
+    "Cursos de Aperfeiçoamento Profissional": [
       "Microcredencial em Fundamentos de Aprendizagem Automática - Universidade de Aveiro (2025)",
       "Fundamentos de Data Science e Inteligência Artificial - Data Science Academy (2024)",
       "Microcredencial em Programação em Python para análise de dados - Universidade de Aveiro (2024)",
@@ -88,9 +68,13 @@
       "Agentes Inteligentes - CrewAI - Canal Sandeco (2025)",
       "Python para Inteligência Artificial - Canal Sandeco (2025)"
     ],
-    "informacoes_adicionais": [
+    "Idiomas": {
+      "Inglês": "Intermediário - B2"
+    },
+    "Informações Adicionais": [
       "Podcaster Fundador e Co-Fundador: Tribo Reptiliana e Meu Exótico Podcast (2020 – 2023)",
       "Atuação como Professor Universitário – UniCesumar (2020)"
     ]
   }
 }
+```

@@ -122,21 +122,19 @@ class ResumeOptimizerCrew():
             tools=[
                 self.tools['pdf_reader_tool'],  # Fixed: use pdf_reader_tool instead of pdf_tool
                 self.tools['latex_tool'],
-                self.tools['file_write_tool'], # Added back file_write_tool
-                self.tools['file_read_tool'] # Para ler o arquivo antes de passar para embedding
+                self.tools['file_read_tool'], # Para ler o arquivo antes de passar para embedding
+                self.tools['file_write_tool'] # Adicionado para criar relatórios
             ],
             verbose=True,
             llm=llm,
             allow_delegation=False
-            # output_file foi removido, a escrita de arquivos é responsabilidade de uma Tarefa/Ferramenta
         )
 
     @agent
     def job_analyzer(self) -> Agent:
-        job_tool = JobDescriptionTool() # Esta ferramenta lida com URL ou texto
         return Agent(
             **self._agents_config['job_analyzer'],
-            tools=[job_tool, self.tools['file_read_tool']], # Adicionado file_read_tool se a vaga for local
+            tools=[self.tools['file_write_tool']], # Simplificado - apenas file_write_tool
             verbose=True,
             allow_delegation=False,
             llm=llm,
@@ -146,7 +144,7 @@ class ResumeOptimizerCrew():
     def alignment_analyzer(self) -> Agent:
         return Agent(
             **self._agents_config['alignment_analyzer'],
-            tools=[self.tools['embedding_tool'], self.tools['similarity_tool']],
+            tools=[self.tools['embedding_tool'], self.tools['similarity_tool'], self.tools['file_write_tool']],
             verbose=True,
             llm=llm, # Usar um LLM mais potente se a análise for complexa
             allow_delegation=False
